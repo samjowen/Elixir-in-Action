@@ -7,7 +7,7 @@ defmodule Concurrency.DatabaseServer do
 
   # Loop is a private function - initialised with defp - it is private because the caller doesn't need to know any implementation details for the server to work.
   defp loop(connection) do
-    receive do
+    new_state = receive do
       {:run_query, from_pid, query_def} ->
         result = run_query(query_def, connection)
         send(from_pid, {:query_result, result})
@@ -16,7 +16,7 @@ defmodule Concurrency.DatabaseServer do
         IO.puts("Unrecognised operation.")
     end
 
-    loop(connection)
+    loop(new_state)
   end
 
   # defp db_query(query_def) do
