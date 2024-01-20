@@ -1,4 +1,4 @@
-defmodule Concurrency.DatabaseServer do
+defmodule DatabaseServer do
   # Start is the public interface of the function which callers of the server can use to start it up.
   def start do
     connection = :rand.uniform(1000)
@@ -7,14 +7,15 @@ defmodule Concurrency.DatabaseServer do
 
   # Loop is a private function - initialised with defp - it is private because the caller doesn't need to know any implementation details for the server to work.
   defp loop(connection) do
-    new_state = receive do
-      {:run_query, from_pid, query_def} ->
-        result = run_query(query_def, connection)
-        send(from_pid, {:query_result, result})
+    new_state =
+      receive do
+        {:run_query, from_pid, query_def} ->
+          result = run_query(query_def, connection)
+          send(from_pid, {:query_result, result})
 
-      _ ->
-        IO.puts("Unrecognised operation.")
-    end
+        _ ->
+          IO.puts("Unrecognised operation.")
+      end
 
     loop(new_state)
   end
