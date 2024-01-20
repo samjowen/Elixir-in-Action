@@ -5,29 +5,31 @@ defmodule Concurrency.Calculator do
     spawn(fn _ -> loop(initial_state) end)
   end
 
-  defp loop(state) do
+  defp process_message(current_state, {:value, caller_pid}) do
+    send(caller_pid, {:response, current_state})
+  end
+
+  defp process_message(current_state, {:add, amount}) do
+    current_state + amount
+  end
+
+  defp process_message(current_state, {:subtract, amount}) do
+    current_state - amount
+  end
+
+  defp process_message(current_state, {:multiply, amount}) do
+    current_state * amount
+  end
+
+  defp process_message(current_state, {:divide, amount}) do
+    current_state / amount
+  end
+
+  defp loop(current_state) do
     new_state =
       receive do
-        # Value getter
-        {:value, caller_pid} ->
-          send(caller_pid, {:response, state})
-          state
-
-        # Adder
-        {:add, amount} ->
-          state + amount
-
-        # Subtractor
-        {:subtract, amount} ->
-          state - amount
-
-        # Muliplyer
-        {:multiply, amount} ->
-          state * amount
-
-        # Divider
-        {:divide, amount} ->
-          state / amount
+        message ->
+          process_message(current_state, message)
       end
 
     loop(new_state)
