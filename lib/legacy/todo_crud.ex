@@ -1,4 +1,7 @@
 defmodule TodoList do
+  @moduledoc """
+  This module provides functionality for managing a todo list.
+  """
   defstruct auto_id: 1, entries: %{}
 
   def new(entries \\ []) do
