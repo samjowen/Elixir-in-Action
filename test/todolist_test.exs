@@ -11,7 +11,7 @@ defmodule TodoListTest do
     assert my_assertion == TodoList.new() |> TodoList.add_entry(~D[2024-01-22], "shower")
   end
 
-  test "it can retrieve data" do
+  test "it can get entries for a date" do
     olistodo_list =
       TodoList.new()
       |> TodoList.add_entry(~D[2024-04-03], "guitar")
