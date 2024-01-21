@@ -26,7 +26,7 @@ defmodule TodoList do
 
   def entries(todo_list, date) do
     Map.filter(todo_list.entries, fn {key, _value} -> key == date end)
-    |> Stream.map(fn {_key, value} -> value end)
+    |> Enum.map(fn {_key, value} -> value end)
   end
 
   def update_entry(todo_list, entry_id, updater_function) do

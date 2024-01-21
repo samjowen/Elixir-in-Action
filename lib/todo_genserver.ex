@@ -26,6 +26,6 @@ defmodule TodoServerGenServer do
   end
 
   def add_entry(entry) do
-    GenServer.call(__MODULE__, {:add_entry, entry})
+    GenServer.cast(__MODULE__, {:add_entry, entry})
   end
 end
