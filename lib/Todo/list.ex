@@ -68,12 +68,12 @@ end
 
 # Implementations
 
-defimpl String.Chars, for: TodoList do
+defimpl String.Chars, for: Todo.List do
   def to_string(_) do
     "Todo Implementation"
   end
 
-  defimpl Collectable, for: TodoList do
+  defimpl Collectable, for: Todo.List do
     def into(original) do
       {original, &into_callback/2}
     end
