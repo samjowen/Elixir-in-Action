@@ -3,6 +3,7 @@ defmodule Todo.Cache do
 
   def init(_) do
     # Use an empty Map as the default state
+    Process.register(self(), __MODULE__)
     {:ok, %{}}
   end
 
