@@ -1,14 +1,12 @@
 defmodule Todo.Cache do
   use GenServer
 
-  @spec init(any()) :: {:ok, %{}}
+  @impl GenServer
   def init(_) do
-    # Use an empty Map as the default state
-    Process.register(self(), __MODULE__)
     {:ok, %{}}
   end
 
-  # If the server exists, give it to the caller, if not, make it.
+  @impl GenServer
   def handle_call({:server_process, name}, _from, todo_servers) do
     case Map.fetch(todo_servers, name) do
       {:ok, todo_server} ->
@@ -16,17 +14,16 @@ defmodule Todo.Cache do
 
       :error ->
         {:ok, new_server} = Todo.Server.start()
-        {:reply, Map.put(todo_servers, name, new_server)}
+        {:reply, new_server, Map.put(todo_servers, name, new_server)}
     end
   end
 
-  @spec start() :: :ignore | {:error, any()} | {:ok, pid()}
   def start() do
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+    GenServer.start(__MODULE__, nil)
   end
 
-  @spec get_server(any()) :: any()
-  def get_server(name) do
-    GenServer.call(__MODULE__, {:server_process, name})
+  @spec get_server(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, any()) :: any()
+  def get_server(pid, name) do
+    GenServer.call(pid, {:server_process, name})
   end
 end

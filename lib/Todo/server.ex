@@ -18,7 +18,7 @@ defmodule Todo.Server do
 
   # Public Interfaces
   def start() do
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+    GenServer.start(__MODULE__, nil)
   end
 
   def entries(date) do
