@@ -11,7 +11,7 @@ defmodule Todo.Cache do
   def handle_call({:server, name}, _from, state) do
     case Map.fetch(state, name) do
       {:ok, value} -> value
-      :error -> Todo.Server.start()
+      :error -> {:reply, Map.put(state, name, Todo.Server.start())}
     end
   end
 
