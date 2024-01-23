@@ -1,6 +1,7 @@
 defmodule Todo.Cache do
   use GenServer
 
+  @spec init(any()) :: {:ok, %{}}
   def init(_) do
     # Use an empty Map as the default state
     Process.register(self(), __MODULE__)
@@ -20,6 +21,7 @@ defmodule Todo.Cache do
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 
+  @spec get_server(any()) :: any()
   def get_server(name) do
     GenServer.call(__MODULE__, {:server, name})
   end
