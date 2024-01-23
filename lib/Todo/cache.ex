@@ -9,10 +9,14 @@ defmodule Todo.Cache do
   end
 
   # If the server exists, give it to the caller, if not, make it.
-  def handle_call({:server, name}, _from, state) do
-    case Map.fetch(state, name) do
-      {:ok, value} -> value
-      :error -> {:reply, Map.put(state, name, Todo.Server.start())}
+  def handle_call({:server_process, name}, _from, todo_servers) do
+    case Map.fetch(todo_servers, name) do
+      {:ok, todo_server} ->
+        {:reply, todo_server, todo_servers}
+
+      :error ->
+        {:ok, new_server} = Todo.Server.start()
+        {:reply, Map.put(todo_servers, name, new_server)}
     end
   end
 
@@ -23,6 +27,6 @@ defmodule Todo.Cache do
 
   @spec get_server(any()) :: any()
   def get_server(name) do
-    GenServer.call(__MODULE__, {:server, name})
+    GenServer.call(__MODULE__, {:server_process, name})
   end
 end
