@@ -1,6 +1,8 @@
 defmodule Todo.DatabaseWorker do
   use GenServer
 
+  # Public API
+
   def start(db_folder) do
     GenServer.start(__MODULE__, db_folder)
   end
@@ -12,6 +14,8 @@ defmodule Todo.DatabaseWorker do
   def get(worker_pid, key) do
     GenServer.call(worker_pid, {:get, key})
   end
+
+  # GenServer Implementation Functions
 
   @impl GenServer
   def handle_call({:get, key}, _from, db_folder) do
