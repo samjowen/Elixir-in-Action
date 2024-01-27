@@ -1,5 +1,6 @@
 defmodule TodoServer do
-  def start() do
+  @moduledoc false
+  def start do
     initial_state = TodoList.new()
     spawn(fn -> loop(:start, initial_state) end)
   end

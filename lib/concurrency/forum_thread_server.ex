@@ -1,5 +1,6 @@
 defmodule Concurrency.ForumThreadServer do
-  def start() do
+  @moduledoc false
+  def start do
     Kernel.spawn(fn -> loop(:init) end)
   end
 

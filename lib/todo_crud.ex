@@ -25,7 +25,8 @@ defmodule TodoList do
   end
 
   def entries(todo_list, date) do
-    Map.filter(todo_list.entries, fn {key, _value} -> key == date end)
+    todo_list.entries
+    |> Map.filter(fn {key, _value} -> key == date end)
     |> Enum.map(fn {_key, value} -> value end)
   end
 
@@ -45,13 +46,15 @@ defmodule TodoList do
   end
 
   def parse_csv(file_path) do
-    File.stream!(file_path)
+    file_path
+    |> File.stream!()
     |> Stream.map(&String.trim/1)
   end
 
   def convert_csv_line_to_entry(csv_line) do
     line_list =
-      String.replace(csv_line, "/", "-")
+      csv_line
+      |> String.replace("/", "-")
       |> String.split(",")
 
     [date_string, title_string] = line_list

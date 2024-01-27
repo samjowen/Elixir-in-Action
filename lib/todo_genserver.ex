@@ -1,4 +1,5 @@
 defmodule TodoServerGenServer do
+  @moduledoc false
   use GenServer
 
   @impl GenServer
@@ -17,7 +18,7 @@ defmodule TodoServerGenServer do
   end
 
   # Public Interfaces
-  def start() do
+  def start do
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 

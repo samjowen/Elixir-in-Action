@@ -1,5 +1,6 @@
 defmodule Concurrency.Calculator do
   # Public Start Method to make this process
+  @moduledoc false
   @spec start() :: pid()
   def start(initial_state \\ 0) do
     spawn(fn _ -> loop(initial_state) end)

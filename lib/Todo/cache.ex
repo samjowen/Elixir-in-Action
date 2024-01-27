@@ -1,4 +1,5 @@
 defmodule Todo.Cache do
+  @moduledoc false
   use GenServer
 
   @impl GenServer
@@ -20,7 +21,7 @@ defmodule Todo.Cache do
     end
   end
 
-  def start() do
+  def start do
     GenServer.start(__MODULE__, nil)
   end
 

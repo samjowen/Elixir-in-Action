@@ -1,4 +1,5 @@
 defmodule Todo.Database do
+  @moduledoc false
   use GenServer
 
   @db_folder "./persist"
@@ -26,6 +27,10 @@ defmodule Todo.Database do
     {:reply, choose_worker(key, state), state}
   end
 
+  defp choose_worker(key) do
+    GenServer.call(__MODULE__, {:choose_worker, key})
+  end
+
   @spec choose_worker(any(), map()) :: {:ok, pid()} | {:error, String.t()}
   defp choose_worker(db_key, worker_map) do
     worker_key = :erlang.phash2(db_key, map_size(worker_map))
@@ -36,12 +41,8 @@ defmodule Todo.Database do
     end
   end
 
-  defp choose_worker(key) do
-    GenServer.call(__MODULE__, {:choose_worker, key})
-  end
-
   @spec start_workers() :: any()
-  defp start_workers() do
+  defp start_workers do
     Enum.reduce(0..2, %{}, fn index, acc ->
       {:ok, worker_pid} = Todo.DatabaseWorker.start(@db_folder)
       Map.put(acc, index, worker_pid)

@@ -1,4 +1,5 @@
 defmodule ServerProcess do
+  @moduledoc false
   @spec start(atom()) :: pid()
   def start(callback_module) do
     spawn(fn _ ->
@@ -30,6 +31,7 @@ defmodule ServerProcess do
 end
 
 defmodule KeyValueStore do
+  @moduledoc false
   def init do
     %{}
   end
@@ -42,7 +44,7 @@ defmodule KeyValueStore do
     {Map.get(state, key), state}
   end
 
-  def start() do
+  def start do
     ServerProcess.start(__MODULE__)
   end
 

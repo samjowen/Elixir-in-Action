@@ -1,4 +1,5 @@
 defmodule KeyValueStoreGenServer do
+  @moduledoc false
   use GenServer
 
   # We have to supply our own init function which GenServer will use. This gives the initial state
@@ -31,7 +32,7 @@ defmodule KeyValueStoreGenServer do
 
   # Public Functions
 
-  def start() do
+  def start do
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 

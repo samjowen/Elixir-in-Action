@@ -1,5 +1,6 @@
 defmodule DatabaseServer do
   # Start is the public interface of the function which callers of the server can use to start it up.
+  @moduledoc false
   def start do
     connection = :rand.uniform(1000)
     spawn(fn -> loop(connection) end)
