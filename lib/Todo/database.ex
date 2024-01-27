@@ -3,11 +3,12 @@ defmodule Todo.Database do
 
   @db_folder "./persist"
 
+  # Public API
+
   def start do
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 
-  @spec store(any(), any()) :: any()
   def store(key, data) do
     {:ok, worker_pid} = choose_worker(key)
     Todo.DatabaseWorker.store(worker_pid, key, data)
@@ -17,6 +18,8 @@ defmodule Todo.Database do
     {:ok, worker_pid} = choose_worker(key)
     Todo.DatabaseWorker.get(worker_pid, key)
   end
+
+  # GenServer Implementation Functions
 
   @impl GenServer
   def handle_call({:choose_worker, key}, _from, state) do
@@ -33,11 +36,12 @@ defmodule Todo.Database do
     end
   end
 
-  def choose_worker(key) do
+  defp choose_worker(key) do
     GenServer.call(__MODULE__, {:choose_worker, key})
   end
 
-  def start_workers() do
+  @spec start_workers() :: any()
+  defp start_workers() do
     Enum.reduce(0..2, %{}, fn index, acc ->
       {:ok, worker_pid} = Todo.DatabaseWorker.start(@db_folder)
       Map.put(acc, index, worker_pid)
