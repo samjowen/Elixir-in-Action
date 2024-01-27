@@ -3,7 +3,7 @@ defmodule Todo.Server do
 
   @impl GenServer
   def init(name) do
-    {:ok, {name, TodoList.new()}}
+    {:ok, {name, Todo.Database.get(name) || Todo.List.new()}}
   end
 
   @impl GenServer

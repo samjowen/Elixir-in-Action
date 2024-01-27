@@ -43,9 +43,27 @@ defmodule Todo.Database do
     Path.join(@db_folder, to_string(key))
   end
 
+  @spec choose_worker(any(), map()) :: {:ok, pid()} | {:error, String.t()}
+  def choose_worker(db_key, worker_map) do
+    worker_key = :erlang.phash2(db_key, map_size(worker_map))
+
+    case Map.get(worker_map, worker_key) do
+      nil -> {:error, "No worker found for key #{db_key}"}
+      pid -> {:ok, pid}
+    end
+  end
+
   @impl GenServer
+  @spec init(any()) :: {:ok, any()}
   def init(_) do
     File.mkdir_p!(@db_folder)
-    {:ok, nil}
+
+    workers =
+      Enum.reduce(0..2, %{}, fn index, acc ->
+        {:ok, worker_pid} = Todo.DatabaseWorker.start(@db_folder)
+        Map.put(acc, index, worker_pid)
+      end)
+
+    {:ok, workers}
   end
 end
