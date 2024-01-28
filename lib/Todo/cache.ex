@@ -2,9 +2,12 @@ defmodule Todo.Cache do
   @moduledoc false
   use GenServer
 
+  require Logger
+
   @impl GenServer
   @spec init(any()) :: {:ok, %{}}
   def init(_) do
+    IO.puts("Starting Todo Cache...")
     Todo.Database.start_link()
     {:ok, %{}}
   end
@@ -21,8 +24,8 @@ defmodule Todo.Cache do
     end
   end
 
-  def start do
-    GenServer.start(__MODULE__, nil)
+  def start_link(_init_arg) do
+    GenServer.start_link(__MODULE__, nil)
   end
 
   @spec get_server(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, any()) :: any()
