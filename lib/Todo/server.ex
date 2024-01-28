@@ -20,8 +20,8 @@ defmodule Todo.Server do
   end
 
   # Public Interfaces
-  def start(todo_list_name) do
-    GenServer.start(__MODULE__, todo_list_name)
+  def start_link(todo_list_name) do
+    GenServer.start_link(__MODULE__, todo_list_name)
   end
 
   def entries(date) do

@@ -6,8 +6,8 @@ defmodule Todo.Database do
 
   # Public API
 
-  def start do
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+  def start_link do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def store(key, data) do
@@ -44,7 +44,7 @@ defmodule Todo.Database do
   @spec start_workers() :: any()
   defp start_workers do
     Enum.reduce(0..2, %{}, fn index, acc ->
-      {:ok, worker_pid} = Todo.DatabaseWorker.start(@db_folder)
+      {:ok, worker_pid} = Todo.DatabaseWorker.start_link(@db_folder)
       Map.put(acc, index, worker_pid)
     end)
   end
