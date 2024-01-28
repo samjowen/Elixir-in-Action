@@ -41,9 +41,10 @@ defmodule Todo.Database do
     end
   end
 
-  @spec start_workers() :: any()
-  defp start_workers do
-    Enum.reduce(0..2, %{}, fn index, acc ->
+  defp start_workers(amount_of_workers \\ 2) do
+    IO.puts("Creating #{amount_of_workers} database workers...")
+
+    Enum.reduce(0..amount_of_workers, %{}, fn index, acc ->
       {:ok, worker_pid} = Todo.DatabaseWorker.start_link(@db_folder)
       Map.put(acc, index, worker_pid)
     end)
@@ -52,6 +53,7 @@ defmodule Todo.Database do
   @impl GenServer
   @spec init(any()) :: {:ok, any()}
   def init(_) do
+    IO.puts("Starting Todo Database...")
     File.mkdir_p!(@db_folder)
 
     {:ok, start_workers()}
