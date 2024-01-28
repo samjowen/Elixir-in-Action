@@ -25,7 +25,7 @@ defmodule Todo.Cache do
   end
 
   def start_link(_init_arg) do
-    GenServer.start_link(__MODULE__, nil)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   @spec get_server(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, any()) :: any()
