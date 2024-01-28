@@ -1,6 +1,7 @@
 defmodule Todo.Server do
   @moduledoc false
-  use GenServer
+  # I.e., don't restart if it crashes
+  use GenServer, restart: :temporary
 
   @impl GenServer
   def init(name) do
@@ -13,6 +14,10 @@ defmodule Todo.Server do
     {:reply, TodoList.entries(list, date), state}
   end
 
+  def via_tuple(name) do
+    Todo.ProcessRegistry.via_tuple({__MODULE__, name})
+  end
+
   @impl GenServer
   def handle_cast({:add_entry, entry}, state) do
     {_name, list} = state
@@ -21,7 +26,7 @@ defmodule Todo.Server do
 
   # Public Interfaces
   def start_link(todo_list_name) do
-    GenServer.start_link(__MODULE__, todo_list_name)
+    GenServer.start_link(__MODULE__, todo_list_name, name: via_tuple(todo_list_name))
   end
 
   def entries(date) do

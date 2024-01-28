@@ -2,12 +2,20 @@ defmodule Todo.Database do
   @moduledoc false
   use GenServer
 
+  @pool_size 3
   @db_folder "./persist"
 
   # Public API
 
-  def start_link do
+  def start_link(_) do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+    children = Enum.map(1..@pool_size, &worker_spec/1)
+    Supervisor.start_link(children, strategy: :one_for_one)
+  end
+
+  defp worker_spec(worker_id) do
+    default_worker_spec = {Todo.DatabaseWorker, {@db_folder, worker_id}}
+    Supervisor.child_spec(default_worker_spec, id: worker_id)
   end
 
   def store(key, data) do
@@ -21,6 +29,14 @@ defmodule Todo.Database do
   end
 
   # GenServer Implementation Functions
+
+  def child_spec(_) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      type: :supervisor
+    }
+  end
 
   @impl GenServer
   def handle_call({:choose_worker, key}, _from, state) do
@@ -45,7 +61,7 @@ defmodule Todo.Database do
     IO.puts("Creating #{amount_of_workers} database workers...")
 
     Enum.reduce(0..amount_of_workers, %{}, fn index, acc ->
-      {:ok, worker_pid} = Todo.DatabaseWorker.start_link(@db_folder)
+      worker_pid = Todo.DatabaseWorker.start_link({@db_folder, index})
       Map.put(acc, index, worker_pid)
     end)
   end

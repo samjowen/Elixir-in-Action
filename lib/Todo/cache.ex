@@ -8,7 +8,7 @@ defmodule Todo.Cache do
   @spec init(any()) :: {:ok, %{}}
   def init(_) do
     IO.puts("Starting Todo Cache...")
-    Todo.Database.start_link()
+    # Todo.Database.start_link(nil)
     {:ok, %{}}
   end
 
@@ -25,11 +25,24 @@ defmodule Todo.Cache do
   end
 
   def start_link(_init_arg) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+    IO.puts("Starting Todo Cache...")
+    DynamicSupervisor.start_link(__MODULE__, strategy: :one_for_one)
   end
 
   @spec get_server(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, any()) :: any()
   def get_server(pid, name) do
     GenServer.call(pid, {:server_process, name})
+  end
+
+  def child_spec(_arg) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      type: :supervisor
+    }
+  end
+
+  defp start_child(todo_list_name) do
+    DynamicSupervisor.start_child(__MODULE__, {Todo.Server, todo_list_name})
   end
 end
