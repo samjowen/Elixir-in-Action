@@ -54,7 +54,9 @@ defmodule Todo.Database do
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     IO.puts("Starting Todo Database...")
+    IO.puts("Creating database folder...")
     File.mkdir_p!(@db_folder)
+    IO.puts("Database folder created at #{@db_folder}!")
 
     {:ok, start_workers()}
   end
